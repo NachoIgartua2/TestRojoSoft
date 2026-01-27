@@ -1,33 +1,22 @@
 # API RojoSoft - Salesforce
 
-Integración entre el ERP RojoSoft y el CRM Salesforce.
+Integración bidireccional entre el ERP RojoSoft y el CRM Salesforce.
 
 ## Requisitos
 
-- Python 3.9+
-- ODBC Driver 18 for SQL Server
-- Conexión a Azure SQL Server
+- Docker y Docker Compose
+- Credenciales de Azure SQL Server
+- Puerto 8000 disponible en el host
 
-## Instalación
+## Quick Start
 
 ### 1. Clonar repositorio
 ```bash
 git clone <repo-url>
-cd testrojosoft
+cd rojosoft-salesforce-bridge
 ```
 
-### 2. Crear entorno virtual
-```bash
-python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
-```
-
-### 3. Instalar dependencias
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configurar variables de entorno
+### 2. Configurar variables de entorno
 ```bash
 cp .env.example .env
 ```
@@ -44,101 +33,126 @@ API_HOST=0.0.0.0
 API_PORT=8000
 ```
 
-## Ejecutar
-
+### 3. Ejecutar con Docker
 ```bash
-python main.py
+docker build -t rojosoft-salesforce-bridge .
+docker run -d \
+  --name rojosoft-bridge \
+  -p 8000:8000 \
+  --env-file .env \
+  rojosoft-salesforce-bridge
 ```
 
 La API estará disponible en `http://localhost:8000`
 
 ## Documentación
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
-## Pruebas
+## Health Check
 
 ```bash
-python test_api.py
+curl http://localhost:8000/health
 ```
 
 ## Estructura
 
 ```
-testrojosoft/
+rojosoft-salesforce-bridge/
+├── Dockerfile           # Configuracion de contenedor
+├── .dockerignore        # Archivos excluidos de imagen
 ├── main.py              # Punto de entrada
-├── requirements.txt     # Dependencias
+├── requirements.txt     # Dependencias Python
 ├── .env                 # Variables (no subir)
 ├── .env.example         # Template
 ├── app/
-│   ├── database.py      # Acceso a datos
-│   ├── models.py        # Modelos
-│   ├── routes/          # Endpoints
+│   ├── database.py      # Conexion a BD
+│   ├── models.py        # Modelos de datos
+│   ├── routes/          # Endpoints HTTP
 │   │   ├── clientes.py
 │   │   ├── contactos.py
 │   │   ├── productos.py
 │   │   └── precios.py
-│   └── services/        # Lógica
+│   └── services/        # Logica de negocio
 │       ├── cliente_service.py
 │       ├── contacto_service.py
 │       ├── producto_service.py
 │       └── precio_service.py
-└── test_api.py         # Tests
+└── test_api.py          # Tests
 ```
 
 ## Endpoints
 
-### Clientes
-- `GET /api/clientes` - Lista de clientes con paginación
-- `GET /api/clientes/{id}` - Cliente específico
-
-### Contactos
-- `GET /api/clientes/{id}/contactos` - Contactos de cliente
-
-### Productos
-- `GET /api/productos` - Catálogo de productos
-
-### Precios
-- `GET /api/precios` - Precios vigentes
-
-### Sistema
-- `GET /health` - Estado de API y BD
-- `GET /` - Información de API
+GET /api/clientes - Lista de clientes con paginacion
+GET /api/clientes/{id} - Cliente especifico
+GET /api/clientes/{id}/contactos - Contactos de cliente
+GET /api/productos - Catalogo de productos
+GET /api/precios - Precios vigentes
+GET /health - Estado de API y BD
+GET / - Informacion de API
 
 ## Arquitectura
 
-Patrón MVC con servicios:
+Patron MVC con servicios desacoplados:
 
+Routes (HTTP) -> Services (Logica) -> Database (Acceso a datos) -> Azure SQL Server
+
+## Deployment
+
+### Docker Hub
+
+Construccion y push a Docker Hub:
+
+```bash
+docker build -t tuusuario/rojosoft-salesforce-bridge:1.0.0 .
+docker push tuusuario/rojosoft-salesforce-bridge:1.0.0
 ```
-Routes (Controllers)
-    ↓
-Services (Lógica)
-    ↓
-Database (Datos)
-    ↓
-Azure SQL Server
+
+## Verificacion
+
+Estado del contenedor:
+```bash
+docker ps
 ```
+
+Ver logs:
+```bash
+docker logs rojosoft-bridge
+```
+
+Detener contenedor:
+```bash
+docker stop rojosoft-bridge
+```
+
+## Variables de Entorno
+
+DB_SERVER - Servidor Azure SQL
+DB_NAME - Nombre de base de datos
+DB_USER - Usuario de BD
+DB_PASSWORD - Contrasena de BD
+API_VERSION - Version de API (default: 1.0.0)
+API_HOST - Host de escucha (default: 0.0.0.0)
+API_PORT - Puerto de escucha (default: 8000)
 
 ## Seguridad
 
-- Credenciales en variables de entorno
-- Archivo `.env` en `.gitignore`
-- CORS configurado (ajustar para producción)
-- Manejo de errores en todos los endpoints
+Credenciales se pasan via variables de entorno, no en codigo
+Archivo .env no se incluye en control de versiones
+CORS configurado (ajustar en produccion si es necesario)
+Manejo de errores en todos los endpoints
+Archivo .dockerignore excluye archivos innecesarios de imagen
 
-## Notas
+## Base de Datos
 
-- Sin autenticación (agregar según requerimientos)
-- CORS abierto a todos (restringir en producción)
-- Sin pooling de conexiones (considerarlo para alta carga)
+Servidor: Azure SQL Server
+Tablas principales:
+- MAESTROCLIENTES (clientes)
+- MAESTROCONTACTOS (contactos)
+- MAESTROFACTURACION (facturas)
 
-## Contribuir
-
-1. Crear rama: `git checkout -b feature/tu-feature`
-2. Hacer cambios: `git commit -m 'Agrega tu-feature'`
-3. Push: `git push origin feature/tu-feature`
-4. Pull request
+Conexion mediante ODBC con pyodbc
 
 ## Licencia
 

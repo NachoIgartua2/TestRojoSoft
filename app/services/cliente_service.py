@@ -10,17 +10,15 @@ class ClienteService:
         SELECT 
             Cuenta,
             Nombre,
+            ClienteTipo,
+            DescTipoActividad,
             CUIT,
             Telefono,
             EMail,
-            Domicilio,
-            Localidad,
-            Provincia,
+            Direccion,
             Zona,
-            ListaPrecio,
-            CondicionPago,
             NombreVendedor,
-            ActivoInactivo
+            DescCondicionPago
         FROM MAESTROCLIENTES
         WHERE 1=1
         """
@@ -38,19 +36,17 @@ class ClienteService:
         clientes = []
         for row in resultados:
             cliente = Cliente(
-                cuenta=row[0],
-                nombre=row[1],
-                cuit=row[2],
-                telefono=row[3],
-                email=row[4],
-                domicilio=row[5],
-                localidad=row[6],
-                provincia=row[7],
-                zona=row[8],
-                lista_precio=row[9],
-                condicion_pago=row[10],
-                vendedor=row[11],
-                activo=row[12]
+                CodigoCuenta=row[0],
+                NombreCuenta=row[1],
+                TipoCuenta=row[2],
+                RubroActividad=row[3],
+                CUITDocumento=row[4],
+                Telefono=row[5],
+                Email=row[6],
+                DireccionFacturacion=row[7],
+                ZonaComercial=row[8],
+                VendedorAsignado=row[9],
+                CondicionPagoPreferente=row[10]
             )
             clientes.append(cliente)
         
@@ -63,17 +59,15 @@ class ClienteService:
         SELECT 
             Cuenta,
             Nombre,
+            ClienteTipo,
+            DescTipoActividad,
             CUIT,
             Telefono,
             EMail,
-            Domicilio,
-            Localidad,
-            Provincia,
+            Direccion,
             Zona,
-            ListaPrecio,
-            CondicionPago,
             NombreVendedor,
-            ActivoInactivo
+            DescCondicionPago
         FROM MAESTROCLIENTES
         WHERE Cuenta = ?
         """
@@ -84,19 +78,17 @@ class ClienteService:
             return None
         
         cliente = Cliente(
-            cuenta=resultado[0],
-            nombre=resultado[1],
-            cuit=resultado[2],
-            telefono=resultado[3],
-            email=resultado[4],
-            domicilio=resultado[5],
-            localidad=resultado[6],
-            provincia=resultado[7],
-            zona=resultado[8],
-            lista_precio=resultado[9],
-            condicion_pago=resultado[10],
-            vendedor=resultado[11],
-            activo=resultado[12]
+            CodigoCuenta=resultado[0],
+            NombreCuenta=resultado[1],
+            TipoCuenta=resultado[2],
+            RubroActividad=resultado[3],
+            CUITDocumento=resultado[4],
+            Telefono=resultado[5],
+            Email=resultado[6],
+            DireccionFacturacion=resultado[7],
+            ZonaComercial=resultado[8],
+            VendedorAsignado=resultado[9],
+            CondicionPagoPreferente=resultado[10]
         )
         
         return cliente

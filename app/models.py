@@ -1,20 +1,19 @@
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, Field
+from typing import Optional, List, Union
+from decimal import Decimal
 
 class Cliente(BaseModel):
-    cuenta: str
-    nombre: Optional[str] = None
-    cuit: Optional[str] = None
-    telefono: Optional[str] = None
-    email: Optional[str] = None
-    domicilio: Optional[str] = None
-    localidad: Optional[str] = None
-    provincia: Optional[str] = None
-    zona: Optional[str] = None
-    lista_precio: Optional[str] = None
-    condicion_pago: Optional[str] = None
-    vendedor: Optional[str] = None
-    activo: Optional[str] = None
+    CodigoCuenta: str
+    NombreCuenta: Optional[str] = None
+    TipoCuenta: Optional[str] = None
+    RubroActividad: Optional[Union[str, int]] = None
+    CUITDocumento: Optional[str] = None
+    Telefono: Optional[str] = None
+    Email: Optional[str] = None
+    DireccionFacturacion: Optional[str] = None
+    ZonaComercial: Optional[str] = None
+    VendedorAsignado: Optional[str] = None
+    CondicionPagoPreferente: Optional[str] = None
 
 class Contacto(BaseModel):
     id: int
@@ -32,6 +31,9 @@ class Producto(BaseModel):
     nombre: str
     rubro: Optional[str] = None
     moneda: Optional[str] = None
+    alicuota_iva: Optional[Union[str, float, Decimal]] = None
+    nombre_proveedor: Optional[str] = None
+    cuenta_proveedor: Optional[str] = None
     unidad_medida: Optional[str] = None
 
 class Precio(BaseModel):

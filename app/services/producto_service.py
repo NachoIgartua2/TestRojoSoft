@@ -12,6 +12,9 @@ class ProductoService:
             Articulo,
             CentroOperativo,
             CodigoMoneda,
+            AlicuotaIVAArticulo,
+            NombreProveedorCosto,
+            CuentaProveedorCosto,
             UnidadMedida
         FROM MAESTROFACTURACION
         WHERE CodigoArticulo IS NOT NULL 
@@ -29,7 +32,10 @@ class ProductoService:
                 nombre=row[1],
                 rubro=row[2],
                 moneda=row[3],
-                unidad_medida=row[4]
+                alicuota_iva=float(row[4]) if row[4] is not None else None,
+                nombre_proveedor=row[5],
+                cuenta_proveedor=row[6],
+                unidad_medida=row[7]
             )
             productos.append(producto)
         
