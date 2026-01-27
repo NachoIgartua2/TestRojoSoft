@@ -30,11 +30,11 @@ def test_obtener_clientes():
         print(f"Clientes obtenidos: {len(response.json())}")
         print("\nPrimeros 3 clientes:")
         for cliente in response.json()[:3]:
-            print(f"\n   ID: {cliente['cuenta']}")
-            print(f"   Nombre: {cliente['nombre']}")
-            print(f"   CUIT: {cliente['cuit']}")
-            print(f"   Email: {cliente['email']}")
-            print(f"   Zona: {cliente['zona']}")
+            print(f"\n   ID: {cliente['CodigoCuenta']}")
+            print(f"   Nombre: {cliente['NombreCuenta']}")
+            print(f"   CUIT: {cliente['CUITDocumento']}")
+            print(f"   Email: {cliente['Email']}")
+            print(f"   Zona: {cliente['ZonaComercial']}")
     except Exception as e:
         print(f"Error: {str(e)}")
 
@@ -48,19 +48,19 @@ def test_obtener_cliente_especifico():
         # Primero obtener un cliente
         response = requests.get(f"{BASE_URL}/api/clientes", params={"limit": 1})
         if response.json():
-            cliente_id = response.json()[0]['cuenta']
+            cliente_id = response.json()[0]['CodigoCuenta']
             
             response = requests.get(f"{BASE_URL}/api/clientes/{cliente_id}")
             print(f"Status: {response.status_code}")
             cliente = response.json()
             print(f"\nCliente encontrado:")
-            print(f"   Cuenta: {cliente['cuenta']}")
-            print(f"   Nombre: {cliente['nombre']}")
-            print(f"   CUIT: {cliente['cuit']}")
-            print(f"   Teléfono: {cliente['telefono']}")
-            print(f"   Domicilio: {cliente['domicilio']}")
-            print(f"   Provincia: {cliente['provincia']}")
-            print(f"   Vendedor: {cliente['vendedor']}")
+            print(f"   Cuenta: {cliente['CodigoCuenta']}")
+            print(f"   Nombre: {cliente['NombreCuenta']}")
+            print(f"   CUIT: {cliente['CUITDocumento']}")
+            print(f"   Teléfono: {cliente['Telefono']}")
+            print(f"   Dirección: {cliente['DireccionFacturacion']}")
+            print(f"   Zona: {cliente['ZonaComercial']}")
+            print(f"   Vendedor: {cliente['VendedorAsignado']}")
         else:
             print("Sin clientes en la BD")
     except Exception as e:
@@ -118,6 +118,10 @@ def test_obtener_productos():
             print(f"\n   Código: {producto['codigo']}")
             print(f"   Nombre: {producto['nombre']}")
             print(f"   Rubro: {producto['rubro']}")
+            print(f"   Moneda: {producto['moneda']}")
+            print(f"   Alícuota IVA: {producto['alicuota_iva']}")
+            print(f"   Proveedor: {producto['nombre_proveedor']}")
+            print(f"   Unidad: {producto['unidad_medida']}")
             print(f"   Moneda: {producto['moneda']}")
             print(f"   Unidad: {producto['unidad_medida']}")
     except Exception as e:
