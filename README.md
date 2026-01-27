@@ -56,13 +56,6 @@ La API estará disponible en `http://localhost:8000`
 curl http://localhost:8000/health
 ```
 
-## Pruebas
-
-Ejecutar tests dentro del contenedor:
-```bash
-docker exec rojosoft-bridge python test_api.py
-```
-
 ## Estructura
 
 ```
@@ -116,18 +109,6 @@ docker build -t tuusuario/rojosoft-salesforce-bridge:1.0.0 .
 docker push tuusuario/rojosoft-salesforce-bridge:1.0.0
 ```
 
-### Digital Ocean
-
-Crear droplet con Docker instalado y ejecutar:
-
-```bash
-docker run -d \
-  --name rojosoft-bridge \
-  -p 8000:8000 \
-  --env-file .env \
-  tuusuario/rojosoft-salesforce-bridge:1.0.0
-```
-
 ## Verificacion
 
 Estado del contenedor:
@@ -172,13 +153,6 @@ Tablas principales:
 - MAESTROFACTURACION (facturas)
 
 Conexion mediante ODBC con pyodbc
-
-## Contribuir
-
-1. Crear rama: git checkout -b feature/tu-feature
-2. Hacer cambios: git commit -m 'Descripcion del cambio'
-3. Push: git push origin feature/tu-feature
-4. Pull request
 
 ## Licencia
 
