@@ -1,6 +1,26 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List, Union
 from decimal import Decimal
+
+class Contacto(BaseModel):
+    id: int
+    codigo_cliente: Optional[str] = None
+    cliente: Optional[str] = None
+    contacto: str
+    cargo: Optional[str] = None
+    telefono: Optional[str] = None
+    telefono_movil: Optional[str] = None
+    email: Optional[str] = None
+    vendedor: Optional[str] = None
+
+class ContactosPaginados(BaseModel):
+    """Respuesta paginada de contactos"""
+    total: int = Field(..., description="Total de contactos")
+    cantidad: int = Field(..., description="Cantidad de contactos en esta página")
+    tiene_siguiente: bool = Field(..., description="Indica si hay página siguiente")
+    skip: int = Field(..., description="Contactos saltados")
+    limit: int = Field(..., description="Límite de contactos por página")
+    datos: List[Contacto] = Field(..., description="Lista de contactos")
 
 class Cliente(BaseModel):
     CodigoCuenta: str
@@ -14,17 +34,6 @@ class Cliente(BaseModel):
     ZonaComercial: Optional[str] = None
     VendedorAsignado: Optional[str] = None
     CondicionPagoPreferente: Optional[str] = None
-
-class Contacto(BaseModel):
-    id: int
-    codigo_cliente: Optional[str] = None
-    cliente: Optional[str] = None
-    contacto: str
-    cargo: Optional[str] = None
-    telefono: Optional[str] = None
-    telefono_movil: Optional[str] = None
-    email: Optional[str] = None
-    vendedor: Optional[str] = None
 
 class Producto(BaseModel):
     codigo: str

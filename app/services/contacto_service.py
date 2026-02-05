@@ -1,5 +1,5 @@
 from app.database import execute_query, execute_single
-from app.models import Contacto
+from app.models import Contacto, ContactosPaginados
 from typing import List
 
 class ContactoService:
@@ -48,3 +48,56 @@ class ContactoService:
         query = "SELECT COUNT(*) FROM MAESTROCONTACTOS WHERE CodigoCliente = ?"
         resultado = execute_single(query, (cliente_id,))
         return resultado[0] if resultado else 0
+    
+    @staticmethod
+    def obtener_todos_contactos(skip: int = 0, limit: int = 10000) -> ContactosPaginados:
+        """Obtiene TODOS los contactos con paginación"""
+        # Contar total
+        count_query = "SELECT COUNT(*) FROM MAESTROCONTACTOS"
+        total = execute_single(count_query)[0]
+        
+        # Obtener contactos
+        query = """
+        SELECT 
+            IDTabla,
+            CodigoCliente,
+            Cliente,
+            Contacto,
+            Cargo,
+            Telefono,
+            TelefonoMovil,
+            EMail,
+            Vendedor
+        FROM MAESTROCONTACTOS
+        ORDER BY CodigoCliente, Contacto
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """
+        
+        resultados = execute_query(query, (skip, limit))
+        
+        contactos = []
+        for row in resultados:
+            contacto = Contacto(
+                id=row[0],
+                codigo_cliente=row[1],
+                cliente=row[2],
+                contacto=row[3],
+                cargo=row[4],
+                telefono=row[5],
+                telefono_movil=row[6],
+                email=row[7],
+                vendedor=row[8]
+            )
+            contactos.append(contacto)
+        
+        cantidad = len(contactos)
+        tiene_siguiente = (skip + limit) < total
+        
+        return ContactosPaginados(
+            total=total,
+            cantidad=cantidad,
+            tiene_siguiente=tiene_siguiente,
+            skip=skip,
+            limit=limit,
+            datos=contactos
+        )
